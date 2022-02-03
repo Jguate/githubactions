@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +8,14 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'pipelinegithub';
+
+  ngOnInit(){
+    Swal.fire({
+      position: 'top-end',
+      icon: 'success',
+      title: 'Hola actualizado desde aws pipeline',
+      showConfirmButton: false,
+      timer: 5000
+    })
+  }
 }

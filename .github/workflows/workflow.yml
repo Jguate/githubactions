@@ -17,12 +17,14 @@ jobs:
       - uses: actions/checkout@v1
       - run: npm install
       - run: npm run build
-      - uses: aws-actions/configure-aws-credentials@v1
+      - uses: jakejarvis/s3-sync-action@v0.5.1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-
-      - name: Copy files to the production website with the AWS CLI
-      run: |
-        aws s3 sync . s3://githubactionstestti
+          # --acl public read => makes files publicly readable(i.e. makes sure that your bucket settings are also set to public)
+          # --delete => permanently deletes files in S3 bucket that are not present in latest build
+          args: --acl public-read --delete
+        env:
+          AWS_S3_BUCKET: ${{ secrets.AWS_PRODUCTION_BUCKET_NAME }} # S3 bucket name
+          # note: use IAM role with limited role for below access-key-id and secret-access-key
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }} # Access Key ID
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }} # Access Secret Key
+          SOURCE_DIR: "dist/pipelinegithub" # build folder
